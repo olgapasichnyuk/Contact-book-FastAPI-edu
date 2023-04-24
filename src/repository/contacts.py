@@ -2,7 +2,7 @@ from datetime import date, timedelta, datetime
 from typing import List
 
 from pydantic import EmailStr
-from sqlalchemy import func, and_
+from sqlalchemy import func, and_, or_
 from sqlalchemy.orm import Session
 
 from src.database.models import Contact, User
@@ -51,16 +51,32 @@ async def delete_contact(contact_id: int, user: User, db: Session) -> Contact:
     return contact
 
 
-async def match_by_name(name: str, user: User, db: Session) -> List[Contact]:
-    return db.query(Contact).filter(and_(Contact.name == name, Contact.user_id == user.id)).all()
+async def search_everywhere_contacts(parameter: str, user: User, db: Session):
+    contacts = db.query(Contact).filter(Contact.user_id == user.id).filter(or_(Contact.name.contains(parameter),
+                                                                               Contact.surname.contains(parameter),
+                                                                               Contact.email.contains(parameter))).all()
+    return contacts
 
 
-async def match_by_surname(surname: str, user: User, db: Session) -> List[Contact]:
-    return db.query(Contact).filter(and_(Contact.surname == surname, Contact.user_id == user.id)).all()
+async def filter_contacts(name: str, surname: str, email: str, user: User, db: Session):
+
+    contacts = db.query(Contact).filter(and_(Contact.user_id == user.id,
+                                             Contact.name.contains(name),
+                                             Contact.surname.contains(surname),
+                                             Contact.email.contains(email))).all()
+    return contacts
 
 
-async def match_by_email(email: EmailStr, user: User, db: Session) -> Contact:
-    return db.query(Contact).filter(and_(Contact.email == email, Contact.user_id == user.id)).first()
+# async def match_by_name(name: str, user: User, db: Session) -> List[Contact]:
+#     return db.query(Contact).filter(and_(Contact.name == name, Contact.user_id == user.id)).all()
+#
+#
+# async def match_by_surname(surname: str, user: User, db: Session) -> List[Contact]:
+#     return db.query(Contact).filter(and_(Contact.surname == surname, Contact.user_id == user.id)).all()
+#
+#
+# async def match_by_email(email: EmailStr, user: User, db: Session) -> Contact:
+#     return db.query(Contact).filter(and_(Contact.email == email, Contact.user_id == user.id)).first()
 
 
 async def get_birthdays_week(db: Session, user: User):
