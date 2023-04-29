@@ -1,12 +1,10 @@
 
+import redis.asyncio as redis
 from fastapi import FastAPI, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi_limiter import FastAPILimiter
-#import aioredis as redis
-import redis.asyncio as redis
 from sqlalchemy import text
 from sqlalchemy.orm import Session
-
 
 from src.conf.config import settings
 from src.database.db import get_db

@@ -21,6 +21,16 @@ async def read_users_me(current_user: User = Depends(auth_service.get_current_us
 @router.patch('/avatar', response_model=UserDb)
 async def update_avatar_user(file: UploadFile = File(), current_user: User = Depends(auth_service.get_current_user),
                              db: Session = Depends(get_db)):
+    """
+    The update_avatar_user function updates the avatar of a user.
+    The function takes in an UploadFile object, which is a file that has been uploaded to the server.
+    It also takes in a User object and Session object as dependencies.
+
+    :param file: UploadFile: Get the file from the request body
+    :param current_user: User: Get the current user's email
+    :param db: Session: Get the database session
+    :return: The updated user object
+    """
     cloudinary.config(
         cloud_name=settings.cloudinary_name,
         api_key=settings.cloudinary_api_key,

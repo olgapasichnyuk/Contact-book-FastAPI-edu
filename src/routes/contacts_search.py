@@ -18,6 +18,15 @@ router = APIRouter(prefix='/contacts/search', tags=['search contacts'])
 async def search_contacts(parameter: str,
                           db: Session = Depends(get_db),
                           current_user: User = Depends(auth_service.get_current_user)):
+    """
+    The search_contacts function searches for contacts in the database.
+    It takes a parameter, which is the search term, and returns a list of contacts that match.
+
+    :param parameter: str: Search for a contact
+    :param db: Session: Access the database
+    :param current_user: User: Get the current user
+    :return: A list of contacts
+    """
     contacts = await search_everywhere_contacts(parameter, current_user, db)
     return contacts
 
@@ -26,6 +35,18 @@ async def search_contacts(parameter: str,
 async def search_with_filter_contacts(name: str = '', surname: str = '', email: str = '',
                                       db: Session = Depends(get_db),
                                       current_user: User = Depends(auth_service.get_current_user)):
+    """
+    The search_with_filter_contacts function searches for contacts in the database.
+    It takes three optional parameters: name, surname and email.
+    If no parameter is given, it returns all the contacts of a user.
+
+    :param name: str: Filter the contacts by name
+    :param surname: str: Filter the contacts by surname
+    :param email: str: Filter the contacts by email
+    :param db: Session: Pass the database session to the function
+    :param current_user: User: Get the current user from the database
+    :return: A list of contacts
+    """
     contacts = await filter_contacts(name, surname, email, current_user, db)
     return contacts
 
